@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/call_bg"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        app:cardCornerRadius="60dp"
+       >
+
+        <ImageView
+            android:id="@+id/user_image"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerCrop"
+            ></ImageView>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/user_name_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/call_type_txt"
+
+        android:layout_centerHorizontal="true"
+        android:ellipsize="end"
+        android:lines="1"
+        android:padding="8dp"
+        android:textColor="@android:color/white"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        tools:text="User Name" />
+
+    <TextView
+        android:id="@+id/call_type_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="180dp"
+        android:gravity="center_horizontal"
+        android:padding="8dp"
+        android:textColor="#D1CDCD"
+        android:textSize="24sp"
+        tools:text="Incoming audio call" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100dp"
+        android:gravity="center_horizontal">
+        <ImageView
+            android:id="@+id/start_call_btn"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+
+            android:background="@drawable/selector_call_start"
+            android:onClick="onStartCall"
+            android:padding="16dp"
+            android:src="@drawable/ic_call_start"
+            tools:ignore="ContentDescription" />
+        <ImageView
+            android:id="@+id/end_call_btn"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/selector_call_end"
+            android:onClick="onEndCall"
+            android:padding="16dp"
+            android:layout_marginStart="86dp"
+            android:src="@drawable/ic_call_end"
+            tools:ignore="ContentDescription" />
+
+
+    </LinearLayout>
+</RelativeLayout>
