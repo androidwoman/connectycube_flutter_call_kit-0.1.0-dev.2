@@ -30,75 +30,82 @@ fun cancelCallNotification(context: Context, callId: String) {
 }
 
 fun showCallNotification(
-        context: Context, callId: String, callType: Int, callInitiatorId: Int,
-        callInitiatorName: String, callOpponents: ArrayList<Int>, userInfo: String, path: String
+    context: Context, callId: String, callType: Int, callInitiatorId: Int,
+    callInitiatorName: String, callOpponents: ArrayList<Int>, userInfo: String, path: String
 ) {
     val notificationManager = NotificationManagerCompat.from(context)
 
     val intent = getLaunchIntent(context)
 
     val pendingIntent = PendingIntent.getActivity(
-            context,
-            callId.hashCode(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+        context,
+        callId.hashCode(),
+        intent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
     val ringtone: Uri = RingtoneManager.getActualDefaultRingtoneUri(
-            context.applicationContext,
-            RingtoneManager.TYPE_RINGTONE
+        context.applicationContext,
+        RingtoneManager.TYPE_RINGTONE
     )
 
     val callTypeTitle =
-            String.format(CALL_TYPE_PLACEHOLDER, if (callType == 1) "Video" else "Audio")
+        String.format(CALL_TYPE_PLACEHOLDER, if (callType == 1) "Video" else "Audio")
 
     val builder: NotificationCompat.Builder =
-            createCallNotification(context, callInitiatorName, callTypeTitle, pendingIntent, ringtone, path)
+        createCallNotification(
+            context,
+            callInitiatorName,
+            callTypeTitle,
+            pendingIntent,
+            ringtone,
+            path
+        )
 
     // Add actions
     addCallRejectAction(
-            context,
-            builder,
-            callId,
-            callType,
-            callInitiatorId,
-            callInitiatorName,
-            callOpponents,
-            userInfo
+        context,
+        builder,
+        callId,
+        callType,
+        callInitiatorId,
+        callInitiatorName,
+        callOpponents,
+        userInfo
     )
     addCallAcceptAction(
-            context,
-            builder,
-            callId,
-            callType,
-            callInitiatorId,
-            callInitiatorName,
-            callOpponents,
-            userInfo
+        context,
+        builder,
+        callId,
+        callType,
+        callInitiatorId,
+        callInitiatorName,
+        callOpponents,
+        userInfo
     )
 
     // Add full screen intent (to show on lock screen)
     addCallFullScreenIntent(
-            context,
-            builder,
-            callId,
-            callType,
-            callInitiatorId,
-            callInitiatorName,
-            callOpponents,
-            userInfo,
-            path
+        context,
+        builder,
+        callId,
+        callType,
+        callInitiatorId,
+        callInitiatorName,
+        callOpponents,
+        userInfo,
+        path
     )
 
     // Add action when delete call notification
     addCancelCallNotificationIntent(
-            context,
-            builder,
-            callId,
-            callType,
-            callInitiatorId,
-            callInitiatorName,
-            userInfo
+        context,
+        builder,
+        callId,
+        callType,
+        callInitiatorId,
+        callInitiatorName,
+        userInfo
     )
 
     // Set small icon for notification
@@ -119,42 +126,42 @@ fun getLaunchIntent(context: Context): Intent? {
 }
 
 fun createCallNotification(
-        context: Context,
-        title: String,
-        text: String?,
-        pendingIntent: PendingIntent,
-        ringtone: Uri,
-        path :String
+    context: Context,
+    title: String,
+    text: String?,
+    pendingIntent: PendingIntent,
+    ringtone: Uri,
+    path: String
 ): NotificationCompat.Builder {
-    var p=BitmapFactory.decodeFile(File(path).getAbsolutePath())
-    if(path.equals("R.drawable.profile"))
+    var p = BitmapFactory.decodeFile(File(path).getAbsolutePath())
+    if (path.equals("R.drawable.profile"))
         p = BitmapFactory.decodeResource(context.getResources(), R.drawable.profile)
-        val notificationBuilder = NotificationCompat.Builder(context, CALL_CHANNEL_ID)
-     notificationBuilder
-            .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-            .setContentTitle(title)
-            .setContentText(text)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setAutoCancel(true)
-            .setOngoing(true)
-            .setLargeIcon(p)
-            .setCategory(NotificationCompat.CATEGORY_CALL)
-            .setContentIntent(pendingIntent)
-            .setSound(ringtone)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setTimeoutAfter(60000)
+    val notificationBuilder = NotificationCompat.Builder(context, CALL_CHANNEL_ID)
+    notificationBuilder
+        .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
+        .setContentTitle(title)
+        .setContentText(text)
+        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        .setAutoCancel(true)
+        .setOngoing(true)
+        .setLargeIcon(p)
+        .setCategory(NotificationCompat.CATEGORY_CALL)
+        .setContentIntent(pendingIntent)
+        .setSound(ringtone)
+        .setPriority(NotificationCompat.PRIORITY_MAX)
+        .setTimeoutAfter(60000)
     return notificationBuilder
 }
 
 fun addCallRejectAction(
-        context: Context,
-        notificationBuilder: NotificationCompat.Builder,
-        callId: String,
-        callType: Int,
-        callInitiatorId: Int,
-        callInitiatorName: String,
-        opponents: ArrayList<Int>,
-        userInfo: String
+    context: Context,
+    notificationBuilder: NotificationCompat.Builder,
+    callId: String,
+    callType: Int,
+    callInitiatorId: Int,
+    callInitiatorName: String,
+    opponents: ArrayList<Int>,
+    userInfo: String
 ) {
     val bundle = Bundle()
     bundle.putString(EXTRA_CALL_ID, callId)
@@ -165,36 +172,36 @@ fun addCallRejectAction(
     bundle.putString(EXTRA_CALL_USER_INFO, userInfo)
 
     val declinePendingIntent: PendingIntent = PendingIntent.getBroadcast(
-            context,
-            callId.hashCode(),
-            Intent(context, EventReceiver::class.java)
-                    .setAction(ACTION_CALL_REJECT)
-                    .putExtras(bundle),
-            PendingIntent.FLAG_UPDATE_CURRENT
+        context,
+        callId.hashCode(),
+        Intent(context, EventReceiver::class.java)
+            .setAction(ACTION_CALL_REJECT)
+            .putExtras(bundle),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
     val declineAction: NotificationCompat.Action = NotificationCompat.Action.Builder(
-            context.resources.getIdentifier(
-                    "ic_menu_close_clear_cancel",
-                    "drawable",
-                    context.packageName
-            ),
-            getColorizedText("Reject", "#E02B00"),
-            declinePendingIntent
+        context.resources.getIdentifier(
+            "ic_menu_close_clear_cancel",
+            "drawable",
+            context.packageName
+        ),
+        getColorizedText("Reject", "#E02B00"),
+        declinePendingIntent
     )
-            .build()
+        .build()
 
     notificationBuilder.addAction(declineAction)
 }
 
 fun addCallAcceptAction(
-        context: Context,
-        notificationBuilder: NotificationCompat.Builder,
-        callId: String,
-        callType: Int,
-        callInitiatorId: Int,
-        callInitiatorName: String,
-        opponents: ArrayList<Int>,
-        userInfo: String
+    context: Context,
+    notificationBuilder: NotificationCompat.Builder,
+    callId: String,
+    callType: Int,
+    callInitiatorId: Int,
+    callInitiatorName: String,
+    opponents: ArrayList<Int>,
+    userInfo: String
 ) {
     val bundle = Bundle()
     bundle.putString(EXTRA_CALL_ID, callId)
@@ -205,61 +212,61 @@ fun addCallAcceptAction(
     bundle.putString(EXTRA_CALL_USER_INFO, userInfo)
 
     val acceptPendingIntent: PendingIntent = PendingIntent.getBroadcast(
-            context,
-            callId.hashCode(),
-            Intent(context, EventReceiver::class.java)
-                    .setAction(ACTION_CALL_ACCEPT)
-                    .putExtras(bundle),
-            PendingIntent.FLAG_UPDATE_CURRENT
+        context,
+        callId.hashCode(),
+        Intent(context, EventReceiver::class.java)
+            .setAction(ACTION_CALL_ACCEPT)
+            .putExtras(bundle),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
     val acceptAction: NotificationCompat.Action = NotificationCompat.Action.Builder(
-            context.resources.getIdentifier("ic_menu_call", "drawable", context.packageName),
-            getColorizedText("Accept", "#4CB050"),
-            acceptPendingIntent
+        context.resources.getIdentifier("ic_menu_call", "drawable", context.packageName),
+        getColorizedText("Accept", "#4CB050"),
+        acceptPendingIntent
     )
-            .build()
+        .build()
     notificationBuilder.addAction(acceptAction)
 }
 
 fun addCallFullScreenIntent(
-        context: Context,
-        notificationBuilder: NotificationCompat.Builder,
-        callId: String,
-        callType: Int,
-        callInitiatorId: Int,
-        callInitiatorName: String,
-        callOpponents: ArrayList<Int>,
-        userInfo: String,
-        path: String
+    context: Context,
+    notificationBuilder: NotificationCompat.Builder,
+    callId: String,
+    callType: Int,
+    callInitiatorId: Int,
+    callInitiatorName: String,
+    callOpponents: ArrayList<Int>,
+    userInfo: String,
+    path: String
 ) {
     val callFullScreenIntent: Intent = createStartIncomingScreenIntent(
-            context,
-            callId,
-            callType,
-            callInitiatorId,
-            callInitiatorName,
-            callOpponents,
-            userInfo,
-            path
+        context,
+        callId,
+        callType,
+        callInitiatorId,
+        callInitiatorName,
+        callOpponents,
+        userInfo,
+        path
 
     )
     val fullScreenPendingIntent = PendingIntent.getActivity(
-            context,
-            callId.hashCode(),
-            callFullScreenIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+        context,
+        callId.hashCode(),
+        callFullScreenIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
     notificationBuilder.setFullScreenIntent(fullScreenPendingIntent, true)
 }
 
 fun addCancelCallNotificationIntent(
-        appContext: Context?,
-        notificationBuilder: NotificationCompat.Builder,
-        callId: String,
-        callType: Int,
-        callInitiatorId: Int,
-        callInitiatorName: String,
-        userInfo: String
+    appContext: Context?,
+    notificationBuilder: NotificationCompat.Builder,
+    callId: String,
+    callType: Int,
+    callInitiatorId: Int,
+    callInitiatorName: String,
+    userInfo: String
 ) {
     val bundle = Bundle()
     bundle.putString(EXTRA_CALL_ID, callId)
@@ -269,12 +276,12 @@ fun addCancelCallNotificationIntent(
     bundle.putString(EXTRA_CALL_USER_INFO, userInfo)
 
     val deleteCallNotificationPendingIntent = PendingIntent.getBroadcast(
-            appContext,
-            callId.hashCode(),
-            Intent(appContext, EventReceiver::class.java)
-                    .setAction(ACTION_CALL_NOTIFICATION_CANCELED)
-                    .putExtras(bundle),
-            PendingIntent.FLAG_UPDATE_CURRENT
+        appContext,
+        callId.hashCode(),
+        Intent(appContext, EventReceiver::class.java)
+            .setAction(ACTION_CALL_NOTIFICATION_CANCELED)
+            .putExtras(bundle),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
     notificationBuilder.setDeleteIntent(deleteCallNotificationPendingIntent)
 }
@@ -282,12 +289,12 @@ fun addCancelCallNotificationIntent(
 fun createCallNotificationChannel(notificationManager: NotificationManagerCompat, sound: Uri) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val channel = NotificationChannel(
-                CALL_CHANNEL_ID,
-                CALL_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
+            CALL_CHANNEL_ID,
+            CALL_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_HIGH
         )
         channel.setSound(
-                sound, AudioAttributes.Builder()
+            sound, AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
                 .build()
@@ -298,7 +305,7 @@ fun createCallNotificationChannel(notificationManager: NotificationManagerCompat
 
 fun setNotificationSmallIcon(context: Context, notificationBuilder: NotificationCompat.Builder) {
     val resID =
-            context.resources.getIdentifier("ic_launcher_foreground", "drawable", context.packageName)
+        context.resources.getIdentifier("ic_launcher_foreground", "drawable", context.packageName)
     if (resID != 0) {
         notificationBuilder.setSmallIcon(resID)
     } else {
@@ -309,9 +316,9 @@ fun setNotificationSmallIcon(context: Context, notificationBuilder: Notification
 fun setNotificationColor(context: Context, notificationBuilder: NotificationCompat.Builder) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         val accentID = context.resources.getIdentifier(
-                "call_notification_color_accent",
-                "color",
-                context.packageName
+            "call_notification_color_accent",
+            "color",
+            context.packageName
         )
         if (accentID != 0) {
             notificationBuilder.color = context.resources.getColor(accentID, null)
